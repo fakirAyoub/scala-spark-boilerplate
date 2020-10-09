@@ -1,4 +1,4 @@
-package com.formation.spark
+package com.fakir.samples
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.log4j.Logger
