@@ -1,0 +1,27 @@
+name: build-project-workflow
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Build Fat Jar
+        run: sbt assembly
+      - name: S3 Upload Jar
+        uses: tpaschalis/s3-sync-action@master
+    env:
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}/jar/
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: 'eu-west-1'
+      FILE: 'target/scala-2.11/*.jar'
