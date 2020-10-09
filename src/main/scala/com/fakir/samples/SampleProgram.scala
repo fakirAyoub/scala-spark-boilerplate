@@ -8,7 +8,7 @@ object SampleProgram {
 
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.OFF)
-
+    println("new feature")
 
     val sparkConf = new SparkConf().setAppName("My First Program in Spark!")
       .setMaster("local[2]")
