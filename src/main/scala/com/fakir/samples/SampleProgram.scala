@@ -1,26 +1,41 @@
 package com.fakir.samples
 
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.log4j.Logger
-import org.apache.log4j.Level
+import java.io._
+
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
+import org.apache.tika.metadata._
+import org.apache.tika.parser._
+import org.apache.tika.parser.pdf._
 object SampleProgram {
 
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.OFF)
-    println("new feature")
-    println
-    val sparkConf = new SparkConf().setAppName("My First Program in Spark!")
-      .setMaster("local[2]")
-    val sparkContext = new SparkContext(sparkConf)
+    val sparkSession = SparkSession.builder().master("local").getOrCreate()
 
-    val rddFromList = sparkContext.parallelize(Seq("this", "is", "an", "rdd", "from", "a", "Sequence"))
-    rddFromList.map(_.toUpperCase).foreach(println)
+    import java.io.FileInputStream
 
-    
-    //If you want to start working with Spark 2, go through a SparkSession!
-    val sparkSession = SparkSession.builder().getOrCreate()
-    
+    import org.apache.tika.sax.BodyContentHandler
+    val stringWriter = new StringWriter()
+    val handler = new BodyContentHandler(stringWriter)
+    val metadata = new Metadata()
+    val inputstream = new FileInputStream(new File("pdf1.pdf"))
+    val pcontext = new ParseContext()
+
+    //parsing the document using PDF parser
+    val pdfparser = new PDFParser()
+    pdfparser.parse(inputstream, handler, metadata, pcontext)
+
+    //getting the content of the document
+    println("Contents of the PDF :" + handler.toString)
+
+    //getting metadata of the document
+    println("Metadata of the PDF:")
+    val metadataNames = metadata.names
+
+    for (name <- metadataNames) {
+      println(name + " : " + metadata.get(name))
+    }
     
   }
 }
