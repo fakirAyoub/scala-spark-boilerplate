@@ -2,7 +2,7 @@ name: build-project-workflow
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
